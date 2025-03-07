@@ -1,4 +1,6 @@
 'use server'
+import { jwtDecode } from 'jwt-decode'
+import { cookies } from 'next/headers'
 import { FieldValues } from 'react-hook-form'
 
 export const registerUser = async (user: FieldValues) => {
@@ -10,6 +12,9 @@ export const registerUser = async (user: FieldValues) => {
     body: JSON.stringify(user),
   })
   const data = await res.json()
+  if (data.success) {
+    ;(await cookies()).set('access-Token', data?.data?.accessToken)
+  }
   return data
 }
 export const loginuser = async (user: FieldValues) => {
@@ -21,5 +26,22 @@ export const loginuser = async (user: FieldValues) => {
     body: JSON.stringify(user),
   })
   const data = await res.json()
+  if (data.success) {
+    ;(await cookies()).set('access-Token', data?.data?.accessToken)
+  }
   return data
+}
+
+export const currentUser = async () => {
+  const accessToken = (await cookies()).get('access-Token')?.value
+  let decodedUser = null
+  if (accessToken) {
+    decodedUser = await jwtDecode(accessToken)
+    return decodedUser
+  }
+  return decodedUser
+}
+
+export const logOut = async () => {
+  ;(await cookies()).delete('access-Token')
 }

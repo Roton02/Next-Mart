@@ -1,8 +1,26 @@
+"use client"
 import Logo from "@/app/assets/svg/Logo";
 import { Button } from "../ui/button";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, LogOut, ShoppingBag } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { logOut } from "@/service/AuthService";
+import { useUser } from "@/context/userContext";
+import Link from "next/link";
+
 
 export default function Navbar() {
+  const {user, setLoading} = useUser()
+  const handleLogout = () => {
+    logOut()
+    setLoading(true)
+  }
   return (
     <header className="border-b w-full">
       <div className="container flex justify-between items-center mx-auto h-16 px-3">
@@ -24,6 +42,32 @@ export default function Navbar() {
           <Button variant="outline" className="rounded-full p-0 size-10">
             <ShoppingBag />
           </Button>
+          {user ? <>
+           <Button variant="outline" className="rounded-full ">
+            Create Shop
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar>
+  <AvatarImage src="https://github.com/shadcn.png" />
+  <AvatarFallback>USER</AvatarFallback>
+</Avatar>
+
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem>Profile</DropdownMenuItem>
+    <DropdownMenuItem>Dashboard</DropdownMenuItem>
+              <DropdownMenuItem>My shop</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+
+    <DropdownMenuItem onClick={handleLogout}><LogOut/> Log out</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu></> : <Link href={'/login'} ><Button  variant="outline" className="rounded-full cursor-pointer">
+            Login
+          </Button></Link>
+          
+}
         </nav>
       </div>
     </header>
