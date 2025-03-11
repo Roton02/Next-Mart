@@ -23,13 +23,30 @@ export default function CreateShopForm() {
   const [imageFiles, setImageFiles] = useState<File[] | []>([])
   const [imagePreview, setImagePreview] = useState<string[] | []>([])
 
-  const form = useForm()
+  const form = useForm({
+    defaultValues: {
+      shopName: "Roton's Store",
+      address: "123 Main Street, Dhaka",
+      businessLicenseNumber: "BLN-456789",
+      contactNumber: "+880123456789",
+      establishedYear: "2015",
+      servicesOffered: "Electronics ,Repairing",
+      socialMediaLinks: {
+        facebook: "https://facebook.com/rotonstore",
+        twitter: "https://twitter.com/rotonstore",
+        instagram: "https://instagram.com/rotonstore",
+      },
+      taxIdentificationNumber: "TIN-987654",
+      website: "https://www.rotonstore.com",
+    },
+  })
 
   const {
     formState: { isSubmitting },
   } = form
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    console.log(data)
     const servicesOffered = data?.servicesOffered
       .split(',')
       .map((service: string) => service.trim())
@@ -40,12 +57,13 @@ export default function CreateShopForm() {
       servicesOffered: servicesOffered,
       establishedYear: Number(data?.establishedYear),
     }
+    console.log('modifide',modifiedData , imageFiles[0])
 
     try {
       const formData = new FormData()
       formData.append('data', JSON.stringify(modifiedData))
       formData.append('logo', imageFiles[0] as File)
-
+      console.log('formData',formData)
       const res = await createShop(formData)
 
       console.log(res)
