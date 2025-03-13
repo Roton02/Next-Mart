@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { loginuser } from '@/service/auth/AuthService'
 import { loginValidation } from './LoginValidation'
+import { useRouter, useSearchParams } from 'next/navigation'
 // import {  useRouter } from "next/router";
 
 export default function LoginForm() {
@@ -25,6 +26,10 @@ export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginValidation),
   })
+
+const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirectPath')
+  const router = useRouter()
 
   const {
     formState: { isSubmitting },
@@ -36,6 +41,11 @@ export default function LoginForm() {
       console.log(res)
       if (res?.success) {
         toast.success(res?.message)
+        if (redirect) {
+          router.push(redirect)
+        } else {
+          router.push('/')
+        }
       } else {
         toast.error(res?.message)
       }
